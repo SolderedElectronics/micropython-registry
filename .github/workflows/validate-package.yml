@@ -41,23 +41,70 @@ jobs:
         run: pip install jsonschema pyyaml
 
       - name: Validate newly added packages
+        id: validate
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set +e
           python scripts/validate_packages.py \
             --old /tmp/old_packages.txt \
             --new packages.txt \
             --schema schema.json \
-            --github-token "$GH_TOKEN"
+            --github-token "$GH_TOKEN" > /tmp/validate_output.txt 2>&1
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          cat /tmp/validate_output.txt
+
+      - name: Comment result on PR
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ steps.validate.outputs.exit_code }}" = "0" ]; then
+            gh pr comment ${{ github.event.pull_request.number }} \
+              --repo ${{ github.repository }} \
+              --body "✅ Package validation passed. This PR will merge automatically — no further action needed."
+          else
+            {
+              echo "❌ Package validation failed:"
+              echo
+              echo '```'
+              cat /tmp/validate_output.txt
+              echo '```'
+              echo
+              echo "Fix the issue in your own repo/manifest and push again to this branch — no need to open a new PR."
+            } > /tmp/comment_body.txt
+            gh pr comment ${{ github.event.pull_request.number }} \
+              --repo ${{ github.repository }} \
+              --body-file /tmp/comment_body.txt
+          fi
+
+      - name: Fail job if validation failed
+        if: steps.validate.outputs.exit_code != '0'
+        run: exit 1
 
   merge:
     needs: validate
     runs-on: ubuntu-latest
     steps:
       - name: Auto-merge
+        id: merge
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr merge ${{ github.event.pull_request.number }} \
             --squash --delete-branch \
             --repo ${{ github.repository }}
+
+      - name: Comment if auto-merge itself failed
+        if: steps.merge.outcome != 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --body "⚠️ Validation passed, but the automatic merge itself failed (often a merge conflict with main). You may need to rebase/update this branch."
+
+      - name: Fail job if auto-merge failed
+        if: steps.merge.outcome != 'success'
+        run: exit 1
