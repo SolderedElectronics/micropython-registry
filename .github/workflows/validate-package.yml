@@ -33,6 +33,20 @@ jobs:
       - name: Get base packages.txt
         run: git show origin/${{ github.event.pull_request.base.ref }}:packages.txt > /tmp/old_packages.txt
 
+      # Auto-merge below merges the WHOLE PR, not just packages.txt — this
+      # workflow only ever validates that one file's diff. Without this
+      # check, a PR could smuggle an edit to any other file (workflow
+      # definitions, schema.json, this script) past review by riding along
+      # with a valid packages.txt entry.
+      - name: Reject PRs touching anything but packages.txt
+        run: |
+          changed=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD)
+          if [ "$changed" != "packages.txt" ]; then
+            echo "This PR must touch only packages.txt. Changed files:"
+            echo "$changed"
+            exit 1
+          fi
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
