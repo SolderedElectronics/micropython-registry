@@ -3,7 +3,7 @@ name: Validate package submission
 # pull_request_target (not pull_request): needed so the workflow's
 # GITHUB_TOKEN gets write access on PRs from forks, which is required to
 # auto-merge them below. Safe here ONLY because this workflow never
-# executes anything from the PR's own files — it treats packages.txt purely
+# executes anything from the PR's own files - it treats packages.txt purely
 # as data (reads added lines) and fetches external manifests over HTTP. If
 # a future step ever runs code checked out from the PR, this trigger must
 # be revisited.
@@ -33,7 +33,7 @@ jobs:
       - name: Get base packages.txt
         run: git show origin/${{ github.event.pull_request.base.ref }}:packages.txt > /tmp/old_packages.txt
 
-      # Auto-merge below merges the WHOLE PR, not just packages.txt — this
+      # Auto-merge below merges the WHOLE PR, not just packages.txt - this
       # workflow only ever validates that one file's diff. Without this
       # check, a PR could smuggle an edit to any other file (workflow
       # definitions, schema.json, this script) past review by riding along
@@ -77,7 +77,7 @@ jobs:
           if [ "${{ steps.validate.outputs.exit_code }}" = "0" ]; then
             gh pr comment ${{ github.event.pull_request.number }} \
               --repo ${{ github.repository }} \
-              --body "✅ Package validation passed. This PR will merge automatically — no further action needed."
+              --body "✅ Package validation passed. This PR will merge automatically - no further action needed."
           else
             {
               echo "❌ Package validation failed:"
@@ -86,7 +86,7 @@ jobs:
               cat /tmp/validate_output.txt
               echo '```'
               echo
-              echo "Fix the issue in your own repo/manifest and push again to this branch — no need to open a new PR."
+              echo "Fix the issue in your own repo/manifest and push again to this branch - no need to open a new PR."
             } > /tmp/comment_body.txt
             gh pr comment ${{ github.event.pull_request.number }} \
               --repo ${{ github.repository }} \
@@ -108,7 +108,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # --match-head-commit pins this to the SHA the validate job actually
-          # checked — without it, gh pr merge merges whatever the PR's CURRENT
+          # checked - without it, gh pr merge merges whatever the PR's CURRENT
           # head is, so a commit pushed after validation (before this job runs)
           # would get merged unvalidated instead of failing safely.
           gh pr merge ${{ github.event.pull_request.number }} \
@@ -131,7 +131,7 @@ jobs:
 
       # A merge via GITHUB_TOKEN doesn't fire the build-index workflow's
       # `push` trigger (GitHub suppresses events from actions' own token to
-      # prevent infinite loops) — dispatch it explicitly instead, which is a
+      # prevent infinite loops) - dispatch it explicitly instead, which is a
       # direct API call and not subject to that restriction.
       - name: Trigger index rebuild
         if: steps.merge.outcome == 'success'

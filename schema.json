@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/micropython-registry/micropython-registry/schema.json",
-  "title": "mpy-registry.yaml — MicroPython Registry Package Manifest",
-  "description": "Metadata manifest that lives at the root of a PACKAGE AUTHOR'S OWN repo, as mpy-registry.yaml (or at install_path if not repo root). It is not stored in the micropython-registry repo itself — that repo only lists the author's repo URL in packages.txt and fetches this file from it at index-build time. This manifest describes HOW the package is categorized/installed — it does not replace the package's own mip package.json.",
+  "title": "mpy-registry.yaml - MicroPython Registry Package Manifest",
+  "description": "Metadata manifest that lives at the root of a PACKAGE AUTHOR'S OWN repo, as mpy-registry.yaml (or at install_path if not repo root). It is not stored in the micropython-registry repo itself - that repo only lists the author's repo URL in packages.txt and fetches this file from it at index-build time. This manifest describes HOW the package is categorized/installed - it does not replace the package's own mip package.json.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -16,14 +16,14 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "Unique registry package name. Lowercase, kebab-case, used for --index short-name installs in Phase 6. This is a CLI token (passed unquoted to mip install and used as a URL path segment) — keep it space-free. Use display_name for a human-readable label.",
+      "description": "Unique registry package name. Lowercase, kebab-case, used for --index short-name installs in Phase 6. This is a CLI token (passed unquoted to mip install and used as a URL path segment) - keep it space-free. Use display_name for a human-readable label.",
       "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
       "minLength": 2,
       "maxLength": 64
     },
     "display_name": {
       "type": "string",
-      "description": "Optional human-readable label for UIs (e.g. 'Soldered HX711 Library'). Purely cosmetic — never used for installs or URLs, so it may contain spaces/punctuation. Falls back to name if omitted.",
+      "description": "Optional human-readable label for UIs (e.g. 'Soldered HX711 Library'). Purely cosmetic - never used for installs or URLs, so it may contain spaces/punctuation. Falls back to name if omitted.",
       "minLength": 1,
       "maxLength": 80
     },
@@ -64,7 +64,7 @@
     },
     "repo_url": {
       "type": "string",
-      "description": "Optional self-reference to this repo's own URL. Not used to locate the package (packages.txt already provides that) — only as a cross-check that a manifest wasn't copy-pasted from a different package without updating this field.",
+      "description": "Optional self-reference to this repo's own URL. Not used to locate the package (packages.txt already provides that) - only as a cross-check that a manifest wasn't copy-pasted from a different package without updating this field.",
       "format": "uri"
     },
     "homepage": {

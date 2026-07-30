@@ -2,7 +2,7 @@ name: Build package index
 
 # Runs on every push to main (so a merged submission is reflected right
 # away) AND on a schedule (so an author-side edit to their OWN
-# mpy-registry.yaml — which needs no PR here at all — eventually gets
+# mpy-registry.yaml - which needs no PR here at all - eventually gets
 # picked up too, since that kind of change produces no push to this repo).
 on:
   push:

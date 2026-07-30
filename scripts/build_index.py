@@ -3,11 +3,11 @@
 
 Walks every URL in packages.txt, fetches each repo's mpy-registry.yaml, and
 writes:
-  - dist/index.json            — all packages
-  - dist/categories/<cat>.json — packages in that category
+  - dist/index.json            - all packages
+  - dist/categories/<cat>.json - packages in that category
 
 A single package's repo being unreachable or invalid does NOT fail the
-build — it's skipped with a warning. A rebuild for the whole registry
+build - it's skipped with a warning. A rebuild for the whole registry
 should never be blocked by one unrelated package going stale, same
 reasoning as validate_packages.py only checking newly added entries.
 """

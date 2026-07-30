@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate newly added entries in packages.txt for a PR.
 
-Only lines ADDED relative to the PR's base ref are checked — an
+Only lines ADDED relative to the PR's base ref are checked - an
 already-merged package's manifest going stale/unreachable must never block
 someone else's unrelated PR.
 
@@ -11,7 +11,7 @@ For each added repo URL:
   - validate it against schema.json
   - collect its `name` for a collision check against both the other newly
     added entries in this same PR AND every name already in the generated
-    index (dist/index.json on the dist branch) — cheap now that Phase 3
+    index (dist/index.json on the dist branch) - cheap now that Phase 3
     exists, since it's one fetch instead of re-fetching every existing repo
 
 Exits non-zero if any added entry fails.
@@ -85,7 +85,7 @@ def main():
         print(f"Note: {len(removed)} entrie(s) removed, not validated: {sorted(removed)}")
 
     if not added:
-        print("No new packages.txt entries in this PR — nothing to validate.")
+        print("No new packages.txt entries in this PR - nothing to validate.")
         return 0
 
     errors = []

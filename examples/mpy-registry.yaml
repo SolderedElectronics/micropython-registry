@@ -2,7 +2,7 @@
 #
 # This file does NOT live in the micropython-registry repo. It lives at the
 # ROOT of your OWN package's repo (e.g. github.com/janedoe/micropython-bme280).
-# The registry only stores your repo URL (see packages.txt) — this manifest
+# The registry only stores your repo URL (see packages.txt) - this manifest
 # is fetched from your repo directly at index-build time.
 
 name: bme280-driver

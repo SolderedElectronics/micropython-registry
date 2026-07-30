@@ -9,7 +9,7 @@ A searchable index for MicroPython packages that live scattered across individua
 
 The easiest way to browse and install packages is the
 [**MicroPython Helper**](https://marketplace.visualstudio.com/items?itemName=SolderedElectronics.soldered-micropython-helper)
-extension for VS Code — search the registry by name or category and install
+extension for VS Code - search the registry by name or category and install
 a package straight to a connected board with one click, no manual
 `mip install` commands needed. This is the primary, recommended way to use
 the registry.
