@@ -107,8 +107,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # --match-head-commit pins this to the SHA the validate job actually
+          # checked — without it, gh pr merge merges whatever the PR's CURRENT
+          # head is, so a commit pushed after validation (before this job runs)
+          # would get merged unvalidated instead of failing safely.
           gh pr merge ${{ github.event.pull_request.number }} \
             --squash --delete-branch \
+            --match-head-commit ${{ github.event.pull_request.head.sha }} \
             --repo ${{ github.repository }}
 
       - name: Comment if auto-merge itself failed
