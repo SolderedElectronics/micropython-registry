@@ -68,7 +68,7 @@
     },
     "install_path": {
       "type": "string",
-      "description": "Optional subdirectory within the repo containing both this mpy-registry.yaml and the installable package (its mip package.json / module root), for monorepo-style repos where the package isn't at repo root. If omitted, both are assumed to be at repo root.",
+      "description": "Optional subdirectory within the repo containing the installable package (its mip package.json / module root), for monorepo-style repos where the package isn't at repo root. This mpy-registry.yaml manifest itself is always read from repo root regardless of install_path.",
       "minLength": 1
     },
     "category": {

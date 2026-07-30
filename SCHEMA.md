@@ -4,10 +4,10 @@ Arduino Library Manager-style split, on purpose: this repo stays a thin,
 flat list — no per-package files piling up here.
 
 - **`packages.txt`** (this repo) — one package repo URL per line. That's it.
-- **`mpy-registry.yaml`** (in the *package author's own repo*, at repo root
-  or `install_path`) — the actual metadata: name, version, description,
-  category, compatibility, etc. Fetched from the author's repo at
-  index-build time, not stored here.
+- **`mpy-registry.yaml`** (in the *package author's own repo*, always at
+  repo root) — the actual metadata: name, version, description, category,
+  compatibility, etc. Fetched from the author's repo at index-build time,
+  not stored here.
 
 This means updating a package's description/version/category never requires
 a PR to this repo — the author just edits their own `mpy-registry.yaml` and
@@ -33,7 +33,7 @@ this into your own repo's root, don't add it here.
 | `category` | yes | enum | One of: `sensors`, `displays`, `networking`, `protocols`, `audio`, `storage`, `motors-actuators`, `utilities`, `misc`. |
 | `repo_url` | no | string (URI) | Self-reference only — cross-check that this manifest wasn't copy-pasted from another package without updating it. Not used to locate the package; `packages.txt` already does that. |
 | `homepage` | no | string (URI) | Docs/homepage, if different from the repo itself. |
-| `install_path` | no | string | Subdirectory (within this same repo) holding both this manifest and the installable package, for monorepo-style repos. Omit if both are at repo root. |
+| `install_path` | no | string | Subdirectory (within this same repo) holding the installable package, for monorepo-style repos. Only affects where the package code is; `mpy-registry.yaml` itself is always read from repo root. Omit if the package is at repo root. |
 | `tags` | no | string[] | Free-form search tags, beyond the fixed category. |
 | `compatible_ports` | no | enum[] | `esp32`, `esp8266`, `rp2`, `samd`, `stm32`, `nrf`, `mimxrt`, `renesas-ra`, `cc3200`, `zephyr`, `unix`, `windows`, `webassembly`, `other`. Omitting means "untested", not "incompatible". |
 | `compatible_boards` | no | string[] | Specific boards tested, free-form. |
@@ -64,9 +64,14 @@ safety. Verify a package's source before installing it.
 
 1. Add `mpy-registry.yaml` to the root of **your own** package repo (copy
    [`examples/mpy-registry.yaml`](examples/mpy-registry.yaml) as a starting
-   point).
-2. Open a PR against **this** repo adding one new line to `packages.txt`
-   (your repo's URL, alphabetically sorted). Don't add any other files here.
-3. CI (Phase 2) fetches `mpy-registry.yaml` from your repo, validates it
-   against `schema.json`, and checks for name collisions.
+   point). GitHub repos only for now — GitLab/other hosts aren't supported
+   by CI yet.
+2. Open a PR against **this** repo adding one or more new lines to
+   `packages.txt` (your repo's URL(s), alphabetically sorted). Don't add
+   any other files here.
+3. CI ([`.github/workflows/validate-package.yml`](.github/workflows/validate-package.yml))
+   fetches `mpy-registry.yaml` from each newly added repo, validates it
+   against `schema.json`, and checks for name collisions among the newly
+   added packages. It does **not** re-check already-merged packages against
+   yours — that broader check lands once Phase 3's generated index exists.
 4. A maintainer reviews and merges.

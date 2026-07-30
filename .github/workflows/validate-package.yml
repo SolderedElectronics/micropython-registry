@@ -1,0 +1,43 @@
+name: Validate package submission
+
+on:
+  pull_request:
+    paths:
+      - packages.txt
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Fetch base ref
+        run: git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      - name: Get base packages.txt
+        run: git show origin/${{ github.event.pull_request.base.ref }}:packages.txt > /tmp/old_packages.txt
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install jsonschema pyyaml
+
+      - name: Validate newly added packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/validate_packages.py \
+            --old /tmp/old_packages.txt \
+            --new packages.txt \
+            --schema schema.json \
+            --github-token "$GH_TOKEN"
