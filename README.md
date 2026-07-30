@@ -5,7 +5,48 @@ scattered across individual GitHub repos — comparable to the Arduino
 Library Manager or the ESP-IDF Component Registry, but with packages
 staying hosted in their own repos rather than uploaded anywhere new.
 
-## How it works
+No accounts, nothing extra to install, no special client. If you already
+use [`mpremote`](https://docs.micropython.org/en/latest/reference/mpremote.html)
+or `mip`, you already have everything you need.
+
+## Installing a package
+
+Every package here stays hosted in its own GitHub repo, so you install it
+the same way you'd install any `mip`-compatible package directly from
+GitHub — no `--index` flag needed today:
+
+```sh
+mpremote mip install github:SolderedElectronics/Soldered-MicroPython-INA219
+```
+
+or from the device's own REPL:
+
+```python
+import mip
+mip.install("github:SolderedElectronics/Soldered-MicroPython-INA219")
+```
+
+**Finding a package:** there's no browsable website yet (that's Phase 4,
+not built). For now, browse the generated index directly:
+[`index.json`](https://github.com/SolderedElectronics/micropython-registry/blob/dist/index.json)
+(all packages) or
+[`categories/`](https://github.com/SolderedElectronics/micropython-registry/tree/dist/categories)
+(split by category) on the `dist` branch. Each entry's `repo_url` is what
+you pass to `mip install github:<...>` — drop the `https://github.com/`
+prefix and swap in `github:`.
+
+**Before installing anything:** `mip install` fetches and runs third-party
+code on your device. Nothing in this registry is code-reviewed — CI only
+checks that a submission is well-formed and the repo exists, not that the
+code itself is safe. See the [trust note in `SCHEMA.md`](SCHEMA.md#trust-note)
+before installing from a package you don't already know.
+
+**Short-name installs** (`mip install --index ... ina219-driver`, no full
+repo path) are built and working (see [`worker/`](worker/)) but not yet
+deployed to a public URL — not usable yet, direct `github:` install above
+is the current way to install anything here.
+
+## How it works (architecture)
 
 Arduino Library Manager-style split, on purpose — this repo stays a thin,
 flat list, not hundreds of per-package files:
