@@ -16,10 +16,16 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "Unique registry package name. Lowercase, kebab-case, used for --index short-name installs in Phase 6.",
+      "description": "Unique registry package name. Lowercase, kebab-case, used for --index short-name installs in Phase 6. This is a CLI token (passed unquoted to mip install and used as a URL path segment) — keep it space-free. Use display_name for a human-readable label.",
       "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
       "minLength": 2,
       "maxLength": 64
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Optional human-readable label for UIs (e.g. 'Soldered HX711 Library'). Purely cosmetic — never used for installs or URLs, so it may contain spaces/punctuation. Falls back to name if omitted.",
+      "minLength": 1,
+      "maxLength": 80
     },
     "version": {
       "type": "string",

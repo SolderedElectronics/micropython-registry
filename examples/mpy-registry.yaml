@@ -6,6 +6,7 @@
 # is fetched from your repo directly at index-build time.
 
 name: bme280-driver
+display_name: BME280 Driver
 version: 1.2.0
 description: Driver for the Bosch BME280 temperature/humidity/pressure sensor over I2C.
 author:

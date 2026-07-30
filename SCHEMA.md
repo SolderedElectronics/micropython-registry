@@ -25,7 +25,8 @@ this into your own repo's root, don't add it here.
 
 | Field | Required | Type | Notes |
 |---|---|---|---|
-| `name` | yes | string | Unique registry name. Lowercase kebab-case (`^[a-z0-9]+(-[a-z0-9]+)*$`). Becomes the short-name for `--index` installs in Phase 6. CI (Phase 2) rejects a submission if the name collides with an existing package. |
+| `name` | yes | string | Unique registry name. Lowercase kebab-case (`^[a-z0-9]+(-[a-z0-9]+)*$`). Becomes the short-name for `--index` installs in Phase 6 — passed unquoted to `mip install` and used as a URL path segment, so no spaces. CI (Phase 2) rejects a submission if the name collides with an existing package. |
+| `display_name` | no | string | Human-readable label for UIs (e.g. `Soldered HX711 Library`), free-form — spaces/punctuation OK. Purely cosmetic, never used for installs or URLs. Falls back to `name` if omitted. |
 | `version` | yes | string | Semver (`MAJOR.MINOR.PATCH`, optional pre-release/build metadata). |
 | `description` | yes | string | One line, ≤200 chars. |
 | `author` | yes | string \| object | Plain name, or `{name, email?, url?}`. |
