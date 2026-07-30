@@ -23,11 +23,14 @@ Because metadata lives in the author's own repo, updating a package's
 version/description never requires a PR here — CI picks up whatever's
 currently in the author's repo at index-build time.
 
-- **[`dist/index.json`](dist/index.json)** / **`dist/categories/*.json`** —
-  generated from `packages.txt` by
+- **[`dist/index.json`](https://github.com/SolderedElectronics/micropython-registry/blob/dist/index.json)**
+  / **`dist/categories/*.json`** (on the [`dist` branch](https://github.com/SolderedElectronics/micropython-registry/tree/dist),
+  not `main`) — generated from `packages.txt` by
   [`scripts/build_index.py`](scripts/build_index.py), rebuilt on every merge
   to `main` and on a daily schedule (so author-side edits that never touch
-  this repo still get picked up eventually). This is what a future website
+  this repo still get picked up eventually). Kept on its own orphan branch
+  rather than `main` so purely-generated content doesn't bloat real history
+  or fight `main`'s branch protection. This is what a future website
   (Phase 4) or any other tool reads — not `packages.txt` directly.
 
 ## Submitting a package

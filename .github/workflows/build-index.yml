@@ -39,10 +39,12 @@ jobs:
             --out dist \
             --github-token "$GH_TOKEN"
 
-      - name: Commit generated index
+      - name: Publish to dist branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan dist
+          git reset
           git add dist
-          git diff --staged --quiet || git commit -m "ops(index): regenerate dist/index.json"
-          git push
+          git commit -m "ops(index): regenerate dist/index.json"
+          git push --force origin dist
