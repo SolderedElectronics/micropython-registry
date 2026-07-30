@@ -52,6 +52,7 @@ def main():
     parser.add_argument("--schema", required=True, help="path to schema.json")
     parser.add_argument("--out", required=True, help="output directory (e.g. dist)")
     parser.add_argument("--github-token", default=None, help="GITHUB_TOKEN for API rate limits")
+    parser.add_argument("--skipped-out", default=None, help="optional path to write the skipped list as JSON, for CI to alert on")
     args = parser.parse_args()
 
     schema = json.load(open(args.schema))
@@ -79,6 +80,10 @@ def main():
         print("Skipped:")
         for s in skipped:
             print(f"  - {s}")
+
+    if args.skipped_out:
+        with open(args.skipped_out, "w") as f:
+            json.dump(skipped, f)
 
     return 0
 

@@ -56,7 +56,10 @@ Two layers here, worth keeping separate in your head:
 2. **After merge**, the author can change their `mpy-registry.yaml` - or the
    package code itself - at any time, with no further PR to this repo. The
    generated index reflects whatever's in their repo at build time. Entering
-   the registry once is not an ongoing guarantee about content.
+   the registry once is not an ongoing guarantee about content. If a rebuild
+   finds a manifest that no longer passes schema validation, that package is
+   dropped from the index (not the whole build) and tracked in a pinned
+   "Broken packages" issue on this repo until it's fixed.
 
 On top of that, the general point still applies: `mip.install(...)` fetches
 and executes third-party code on-device. Schema validation checks shape, not

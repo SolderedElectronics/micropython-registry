@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   build:
@@ -37,7 +38,39 @@ jobs:
             --packages packages.txt \
             --schema schema.json \
             --out /tmp/dist-out \
-            --github-token "$GH_TOKEN"
+            --github-token "$GH_TOKEN" \
+            --skipped-out /tmp/skipped.json
+
+      - name: Alert on broken packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="Broken packages (auto-generated)"
+          EXISTING=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")][0].number // empty")
+
+          if [ "$(jq 'length' /tmp/skipped.json)" -eq 0 ]; then
+            if [ -n "$EXISTING" ]; then
+              gh issue close "$EXISTING" --comment "All packages passed validation on the latest rebuild."
+            fi
+            exit 0
+          fi
+
+          {
+            echo "The nightly index rebuild found packages that no longer pass schema validation."
+            echo "Each is dropped from \`index.json\` until its manifest is fixed and a rebuild picks it up again."
+            echo
+            jq -r '.[] | "- " + .' /tmp/skipped.json
+            echo
+            echo "_Updated automatically by the [build-index workflow](../actions/workflows/build-index.yml). This issue is edited in place, not reopened as new each run._"
+          } > /tmp/issue-body.md
+
+          if [ -n "$EXISTING" ]; then
+            gh issue edit "$EXISTING" --body-file /tmp/issue-body.md
+            gh issue reopen "$EXISTING" 2>/dev/null || true
+          else
+            gh issue create --title "$TITLE" --body-file /tmp/issue-body.md
+          fi
 
       - name: Publish to dist branch
         # Builds outside the repo (/tmp/dist-out) so the dist branch's root
