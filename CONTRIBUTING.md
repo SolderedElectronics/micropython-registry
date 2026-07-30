@@ -24,3 +24,15 @@ to open a new one.
 
 Schema/docs/CI changes are regular PRs, reviewed like any other project —
 the auto-merge behavior above only applies to `packages.txt` changes.
+
+## Project status
+
+Early build-out, not yet launched. Current progress against the project
+plan:
+
+- [x] Phase 1 — manifest schema (`schema.json`, `SCHEMA.md`)
+- [x] Phase 2 — CI validation + auto-merge
+- [x] Phase 3 — index generation (`dist/index.json`, `dist/categories/*.json`)
+- [ ] Phase 4 — discovery website
+- [ ] Phase 5 — launch / seed content
+- [x] Phase 6 — custom mip index (optional, later) — [`worker/`](worker/), verified against real hardware; not yet deployed to a public URL (needs a Cloudflare account)
