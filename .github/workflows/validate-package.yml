@@ -1,12 +1,20 @@
 name: Validate package submission
 
+# pull_request_target (not pull_request): needed so the workflow's
+# GITHUB_TOKEN gets write access on PRs from forks, which is required to
+# auto-merge them below. Safe here ONLY because this workflow never
+# executes anything from the PR's own files — it treats packages.txt purely
+# as data (reads added lines) and fetches external manifests over HTTP. If
+# a future step ever runs code checked out from the PR, this trigger must
+# be revisited.
 on:
-  pull_request:
+  pull_request_target:
     paths:
       - packages.txt
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   validate:
@@ -41,3 +49,12 @@ jobs:
             --new packages.txt \
             --schema schema.json \
             --github-token "$GH_TOKEN"
+
+      - name: Auto-merge
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} \
+            --squash --delete-branch \
+            --repo ${{ github.repository }}
