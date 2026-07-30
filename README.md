@@ -57,7 +57,7 @@ plan:
 - [x] Phase 3 — index generation (`dist/index.json`, `dist/categories/*.json`)
 - [ ] Phase 4 — discovery website
 - [ ] Phase 5 — launch / seed content
-- [ ] Phase 6 — custom mip index (optional, later)
+- [x] Phase 6 — custom mip index (optional, later) — [`worker/`](worker/), verified against real hardware; not yet deployed to a public URL (needs a Cloudflare account)
 
 ## License
 
