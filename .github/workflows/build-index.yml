@@ -1,0 +1,48 @@
+name: Build package index
+
+# Runs on every push to main (so a merged submission is reflected right
+# away) AND on a schedule (so an author-side edit to their OWN
+# mpy-registry.yaml — which needs no PR here at all — eventually gets
+# picked up too, since that kind of change produces no push to this repo).
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install jsonschema pyyaml
+
+      - name: Build index
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/build_index.py \
+            --packages packages.txt \
+            --schema schema.json \
+            --out dist \
+            --github-token "$GH_TOKEN"
+
+      - name: Commit generated index
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist
+          git diff --staged --quiet || git commit -m "ops(index): regenerate dist/index.json"
+          git push
