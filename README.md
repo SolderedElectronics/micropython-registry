@@ -35,9 +35,9 @@ currently in the author's repo at index-build time.
 
 ## Submitting a package
 
-See [`SCHEMA.md`](SCHEMA.md#submitting-a-package) for the full steps. Short
-version: add `mpy-registry.yaml` to your repo's root, open a PR here adding
-your repo's URL to `packages.txt`.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) / [`SCHEMA.md`](SCHEMA.md#submitting-a-package)
+for the full steps. Short version: add `mpy-registry.yaml` to your repo's
+root, open a PR here adding your repo's URL to `packages.txt`.
 
 PRs are validated automatically
 ([`.github/workflows/validate-package.yml`](.github/workflows/validate-package.yml)):

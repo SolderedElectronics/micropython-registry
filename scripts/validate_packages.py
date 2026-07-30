@@ -9,19 +9,21 @@ For each added repo URL:
   - confirm it's a github.com repo and it exists
   - fetch mpy-registry.yaml from its default branch, root only
   - validate it against schema.json
-  - collect its `name` for a collision check against the other newly added
-    entries in this same PR (NOT against the full existing registry yet —
-    that needs Phase 3's generated index to do cheaply)
+  - collect its `name` for a collision check against both the other newly
+    added entries in this same PR AND every name already in the generated
+    index (dist/index.json on the dist branch) — cheap now that Phase 3
+    exists, since it's one fetch instead of re-fetching every existing repo
 
 Exits non-zero if any added entry fails.
 """
 import argparse
 import json
 import sys
+import urllib.error
 
 import jsonschema
 
-from registry_lib import ManifestError, fetch_manifest, read_urls
+from registry_lib import ManifestError, fetch_manifest, fetch_raw, read_urls
 
 
 def validate_added_url(url, schema, token, errors, names):
@@ -42,12 +44,34 @@ def validate_added_url(url, schema, token, errors, names):
     print(f"OK  {url} -> {name}@{manifest['version']}")
 
 
+def fetch_existing_names(index_url):
+    """Returns {name: repo_url} from the generated index, or raises RuntimeError."""
+    try:
+        raw = fetch_raw(index_url)
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(f"{e.code} {e.reason}")
+    except urllib.error.URLError as e:
+        raise RuntimeError(str(e.reason))
+
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"not valid JSON ({e})")
+
+    return {p["name"]: p.get("repo_url", "?") for p in data["packages"]}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--old", required=True, help="packages.txt at the PR base ref")
     parser.add_argument("--new", required=True, help="packages.txt at the PR head")
     parser.add_argument("--schema", required=True, help="path to schema.json")
     parser.add_argument("--github-token", default=None, help="GITHUB_TOKEN for API rate limits")
+    parser.add_argument(
+        "--index-url",
+        default="https://raw.githubusercontent.com/SolderedElectronics/micropython-registry/dist/index.json",
+        help="URL of the generated index, used for the full-registry name collision check",
+    )
     args = parser.parse_args()
 
     schema = json.load(open(args.schema))
@@ -72,6 +96,17 @@ def main():
     for name, urls in names.items():
         if len(urls) > 1:
             errors.append(f"name collision: '{name}' claimed by multiple new entries in this PR: {urls}")
+
+    try:
+        existing_names = fetch_existing_names(args.index_url)
+        for name, urls in names.items():
+            if name in existing_names:
+                errors.append(
+                    f"name collision: '{name}' already registered by {existing_names[name]}, "
+                    f"claimed again by {urls}"
+                )
+    except RuntimeError as e:
+        errors.append(f"could not fetch existing index for collision check ({args.index_url}): {e}")
 
     if errors:
         print(f"\n{len(errors)} error(s):", file=sys.stderr)

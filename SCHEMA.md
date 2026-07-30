@@ -47,14 +47,15 @@ being silently ignored.
 
 Two layers here, worth keeping separate in your head:
 
-1. **This repo's PR review** only ever sees a URL being added to
-   `packages.txt`. It does not see the target repo's `mpy-registry.yaml`
-   content inline — CI (Phase 2) fetches and validates it, but a human
-   reviewer should still open the linked repo before approving.
+1. **No human ever reviews a submission.** CI validates shape (schema) and
+   reachability (repo exists, `mpy-registry.yaml` fetches, name isn't taken)
+   and merges automatically on success. Nobody reads the linked repo's code
+   before it enters `packages.txt`. Passing CI is not a safety or quality
+   signal — only a well-formedness one.
 2. **After merge**, the author can change their `mpy-registry.yaml` — or the
    package code itself — at any time, with no further PR to this repo. The
-   index (Phase 3) reflects whatever's in their repo at build time. This repo
-   granting entry once is not an ongoing guarantee about content.
+   generated index reflects whatever's in their repo at build time. Entering
+   the registry once is not an ongoing guarantee about content.
 
 On top of that, the general point still applies: `mip.install(...)` fetches
 and executes third-party code on-device. Schema validation checks shape, not
@@ -71,7 +72,8 @@ safety. Verify a package's source before installing it.
    any other files here.
 3. CI ([`.github/workflows/validate-package.yml`](.github/workflows/validate-package.yml))
    fetches `mpy-registry.yaml` from each newly added repo, validates it
-   against `schema.json`, and checks for name collisions among the newly
-   added packages. It does **not** re-check already-merged packages against
-   yours — that broader check lands once Phase 3's generated index exists.
-4. A maintainer reviews and merges.
+   against `schema.json`, and checks for name collisions both among the
+   newly added packages and against every name already in the generated
+   index ([`dist/index.json`](https://github.com/SolderedElectronics/micropython-registry/blob/dist/index.json)).
+4. If validation passes, the PR **merges automatically** — there is no
+   human review step. See the trust note above.
