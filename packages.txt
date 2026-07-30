@@ -7,3 +7,5 @@
 #
 # CI validates that the URL resolves and that mpy-registry.yaml at that repo
 # exists and passes schema.json before merge.
+
+https://github.com/SolderedElectronics/Soldered-MicroPython-INA219
