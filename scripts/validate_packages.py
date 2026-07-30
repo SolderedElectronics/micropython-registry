@@ -17,76 +17,18 @@ Exits non-zero if any added entry fails.
 """
 import argparse
 import json
-import re
 import sys
-import urllib.error
-import urllib.request
 
 import jsonschema
-import yaml
 
-GITHUB_REPO_RE = re.compile(
-    r"^https://github\.com/(?P<owner>[^/\s]+)/(?P<repo>[^/\s]+?)/?$"
-)
-
-
-def read_urls(path):
-    urls = []
-    with open(path) as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            urls.append(line)
-    return urls
-
-
-def github_api_get(url, token):
-    req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json"})
-    if token:
-        req.add_header("Authorization", f"Bearer {token}")
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        return json.load(resp)
-
-
-def fetch_raw(url):
-    with urllib.request.urlopen(url, timeout=15) as resp:
-        return resp.read()
+from registry_lib import ManifestError, fetch_manifest, read_urls
 
 
 def validate_added_url(url, schema, token, errors, names):
-    match = GITHUB_REPO_RE.match(url)
-    if not match:
-        errors.append(f"{url}: not a github.com repo URL (only github.com/<owner>/<repo> supported)")
-        return
-
-    owner, repo = match.group("owner"), match.group("repo")
-
     try:
-        meta = github_api_get(f"https://api.github.com/repos/{owner}/{repo}", token)
-    except urllib.error.HTTPError as e:
-        errors.append(f"{url}: repo lookup failed ({e.code} {e.reason})")
-        return
-    except urllib.error.URLError as e:
-        errors.append(f"{url}: repo lookup failed ({e.reason})")
-        return
-
-    default_branch = meta.get("default_branch", "main")
-    raw_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{default_branch}/mpy-registry.yaml"
-
-    try:
-        raw = fetch_raw(raw_url)
-    except urllib.error.HTTPError as e:
-        errors.append(f"{url}: mpy-registry.yaml not found at repo root ({e.code} {e.reason})")
-        return
-    except urllib.error.URLError as e:
-        errors.append(f"{url}: failed to fetch mpy-registry.yaml ({e.reason})")
-        return
-
-    try:
-        manifest = yaml.safe_load(raw)
-    except yaml.YAMLError as e:
-        errors.append(f"{url}: mpy-registry.yaml is not valid YAML ({e})")
+        manifest = fetch_manifest(url, token)
+    except ManifestError as e:
+        errors.append(f"{url}: {e}")
         return
 
     try:

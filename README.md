@@ -23,6 +23,13 @@ Because metadata lives in the author's own repo, updating a package's
 version/description never requires a PR here — CI picks up whatever's
 currently in the author's repo at index-build time.
 
+- **[`dist/index.json`](dist/index.json)** / **`dist/categories/*.json`** —
+  generated from `packages.txt` by
+  [`scripts/build_index.py`](scripts/build_index.py), rebuilt on every merge
+  to `main` and on a daily schedule (so author-side edits that never touch
+  this repo still get picked up eventually). This is what a future website
+  (Phase 4) or any other tool reads — not `packages.txt` directly.
+
 ## Submitting a package
 
 See [`SCHEMA.md`](SCHEMA.md#submitting-a-package) for the full steps. Short
@@ -44,7 +51,7 @@ plan:
 
 - [x] Phase 1 — manifest schema (`schema.json`, `SCHEMA.md`)
 - [x] Phase 2 — CI validation + auto-merge
-- [ ] Phase 3 — index generation (`dist/index.json`)
+- [x] Phase 3 — index generation (`dist/index.json`, `dist/categories/*.json`)
 - [ ] Phase 4 — discovery website
 - [ ] Phase 5 — launch / seed content
 - [ ] Phase 6 — custom mip index (optional, later)
