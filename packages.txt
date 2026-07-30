@@ -9,3 +9,4 @@
 # exists and passes schema.json before merge.
 
 https://github.com/SolderedElectronics/Soldered-MicroPython-INA219
+https://github.com/SolderedElectronics/Soldered-HX711-MicroPython-Library
