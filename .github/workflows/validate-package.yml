@@ -15,6 +15,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 jobs:
   validate:
@@ -108,3 +109,14 @@ jobs:
       - name: Fail job if auto-merge failed
         if: steps.merge.outcome != 'success'
         run: exit 1
+
+      # A merge via GITHUB_TOKEN doesn't fire the build-index workflow's
+      # `push` trigger (GitHub suppresses events from actions' own token to
+      # prevent infinite loops) — dispatch it explicitly instead, which is a
+      # direct API call and not subject to that restriction.
+      - name: Trigger index rebuild
+        if: steps.merge.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run "Build package index" --repo ${{ github.repository }}
