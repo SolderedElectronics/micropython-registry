@@ -1,0 +1,29 @@
+# Example mpy-registry.yaml
+#
+# This file does NOT live in the micropython-registry repo. It lives at the
+# ROOT of your OWN package's repo (e.g. github.com/janedoe/micropython-bme280).
+# The registry only stores your repo URL (see packages.txt) — this manifest
+# is fetched from your repo directly at index-build time.
+
+name: bme280-driver
+version: 1.2.0
+description: Driver for the Bosch BME280 temperature/humidity/pressure sensor over I2C.
+author:
+  name: Jane Doe
+  url: https://github.com/janedoe
+license: MIT
+category: sensors
+tags:
+  - i2c
+  - temperature
+  - humidity
+  - pressure
+compatible_ports:
+  - esp32
+  - rp2
+  - stm32
+compatible_boards:
+  - ESP32-S3 DevKitC
+  - Raspberry Pi Pico W
+min_micropython_version: "1.20.0"
+dependencies: []

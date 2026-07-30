@@ -1,0 +1,10 @@
+# MicroPython Registry — package list
+#
+# One repo URL per line. To submit a package:
+#   1. Add an "mpy-registry.yaml" manifest to YOUR repo (see SCHEMA.md).
+#   2. Add your repo's URL as one new line below, alphabetically sorted.
+#   3. Open a PR against this file only.
+#
+# CI validates that the URL resolves and that mpy-registry.yaml at that repo
+# exists and passes schema.json before merge.
+https://github.com/janedoe/micropython-bme280

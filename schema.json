@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/micropython-registry/micropython-registry/schema.json",
+  "title": "mpy-registry.yaml — MicroPython Registry Package Manifest",
+  "description": "Metadata manifest that lives at the root of a PACKAGE AUTHOR'S OWN repo, as mpy-registry.yaml (or at install_path if not repo root). It is not stored in the micropython-registry repo itself — that repo only lists the author's repo URL in packages.txt and fetches this file from it at index-build time. This manifest describes HOW the package is categorized/installed — it does not replace the package's own mip package.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "version",
+    "description",
+    "author",
+    "license",
+    "category"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique registry package name. Lowercase, kebab-case, used for --index short-name installs in Phase 6.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "version": {
+      "type": "string",
+      "description": "Current version of the package, semver format.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$"
+    },
+    "description": {
+      "type": "string",
+      "description": "One-line summary shown in search results and package listings.",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "author": {
+      "description": "Package author. Either a plain name string or an object with contact details.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "email": { "type": "string", "format": "email" },
+            "url": { "type": "string", "format": "uri" }
+          }
+        }
+      ]
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier (e.g. MIT, Apache-2.0, GPL-3.0-or-later).",
+      "minLength": 1
+    },
+    "repo_url": {
+      "type": "string",
+      "description": "Optional self-reference to this repo's own URL. Not used to locate the package (packages.txt already provides that) — only as a cross-check that a manifest wasn't copy-pasted from a different package without updating this field.",
+      "format": "uri"
+    },
+    "homepage": {
+      "type": "string",
+      "description": "Optional project homepage or documentation URL, if different from repo_url.",
+      "format": "uri"
+    },
+    "install_path": {
+      "type": "string",
+      "description": "Optional subdirectory within the repo containing both this mpy-registry.yaml and the installable package (its mip package.json / module root), for monorepo-style repos where the package isn't at repo root. If omitted, both are assumed to be at repo root.",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "description": "Primary category for browsing/filtering.",
+      "enum": [
+        "sensors",
+        "displays",
+        "networking",
+        "protocols",
+        "audio",
+        "storage",
+        "motors-actuators",
+        "utilities",
+        "misc"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Optional free-form tags for search, beyond the fixed category.",
+      "items": { "type": "string", "minLength": 1, "maxLength": 32 },
+      "uniqueItems": true,
+      "maxItems": 20
+    },
+    "compatible_ports": {
+      "type": "array",
+      "description": "MicroPython ports this package is known to work on. Omit if unknown/untested; empty/omitted does not mean incompatible.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "esp32",
+          "esp8266",
+          "rp2",
+          "samd",
+          "stm32",
+          "nrf",
+          "mimxrt",
+          "renesas-ra",
+          "cc3200",
+          "zephyr",
+          "unix",
+          "windows",
+          "webassembly",
+          "other"
+        ]
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "compatible_boards": {
+      "type": "array",
+      "description": "Optional free-form list of specific boards this package has been tested on (e.g. 'ESP32-S3 DevKitC', 'Raspberry Pi Pico W').",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "min_micropython_version": {
+      "type": "string",
+      "description": "Optional minimum required MicroPython firmware version, e.g. '1.22.0'.",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "Other registry packages this package depends on.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the dependency as registered in this registry.",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version constraint, e.g. '^1.2.0' or '>=1.0.0'. Omit to mean 'latest'.",
+            "minLength": 1
+          }
+        }
+      },
+      "uniqueItems": true
+    }
+  }
+}
