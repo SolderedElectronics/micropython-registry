@@ -23,9 +23,9 @@ Because metadata lives in the author's own repo, updating a package's
 version/description never requires a PR here — CI picks up whatever's
 currently in the author's repo at index-build time.
 
-- **[`dist/index.json`](https://github.com/SolderedElectronics/micropython-registry/blob/dist/index.json)**
-  / **`dist/categories/*.json`** (on the [`dist` branch](https://github.com/SolderedElectronics/micropython-registry/tree/dist),
-  not `main`) — generated from `packages.txt` by
+- **[`index.json`](https://github.com/SolderedElectronics/micropython-registry/blob/dist/index.json)**
+  / **`categories/*.json`** on the [`dist` branch](https://github.com/SolderedElectronics/micropython-registry/tree/dist)
+  (not `main`) — generated from `packages.txt` by
   [`scripts/build_index.py`](scripts/build_index.py), rebuilt on every merge
   to `main` and on a daily schedule (so author-side edits that never touch
   this repo still get picked up eventually). Kept on its own orphan branch
