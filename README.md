@@ -42,3 +42,10 @@ Want to add your own package? See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 ## License
 
 MIT.
+
+---
+
+By [Soldered Electronics](https://soldered.com) for the MicroPython community.
+
+Looking for MicroPython-compatible hardware? Check out our boards and modules at
+[soldered.com](https://soldered.com) - designed and made in Europe.
