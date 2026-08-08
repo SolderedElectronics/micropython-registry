@@ -1,0 +1,58 @@
+{
+  "packages": [
+    {
+      "name": "ina219-driver",
+      "version": "1.0.0",
+      "description": "Driver for the INA219 zero-drift, bi-directional current/power monitor over I2C.",
+      "author": {
+        "name": "Fran Fodor",
+        "url": "https://github.com/franFodor"
+      },
+      "license": "MIT",
+      "category": "sensors",
+      "tags": [
+        "i2c",
+        "current",
+        "power",
+        "voltage"
+      ],
+      "compatible_ports": [
+        "esp32",
+        "esp8266"
+      ],
+      "compatible_boards": [
+        "Soldered Dasduino CONNECTPLUS"
+      ],
+      "dependencies": [],
+      "repo_url": "https://github.com/SolderedElectronics/Soldered-MicroPython-INA219"
+    },
+    {
+      "name": "soldered-hx711-library",
+      "display_name": "Soldered HX711 Library",
+      "version": "1.0.0",
+      "description": "Driver for the HX711 load cell amplifier (Qwiic/I2C version) for weight and force measurement.",
+      "author": {
+        "name": "Fran Fodor",
+        "url": "https://github.com/franFodor"
+      },
+      "license": "MIT",
+      "category": "sensors",
+      "homepage": "https://solde.red/333005",
+      "tags": [
+        "i2c",
+        "load-cell",
+        "weight",
+        "adc"
+      ],
+      "compatible_ports": [
+        "esp32",
+        "esp8266"
+      ],
+      "compatible_boards": [
+        "Soldered Dasduino CONNECTPLUS"
+      ],
+      "dependencies": [],
+      "repo_url": "https://github.com/SolderedElectronics/Soldered-HX711-MicroPython-Library"
+    }
+  ]
+}
